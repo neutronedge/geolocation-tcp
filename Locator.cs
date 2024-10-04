@@ -19,8 +19,8 @@ namespace GeolocationTCP
             window = w;
             loc = new Geolocator();
             loc.DesiredAccuracy = PositionAccuracy.High;
-            loc.DesiredAccuracyInMeters = 10;
-            loc.ReportInterval = 500;
+            //loc.DesiredAccuracyInMeters = 10;
+            loc.ReportInterval = 1000;
             StartTracking();
         }
 
@@ -116,7 +116,7 @@ namespace GeolocationTCP
                    
                     DateTimeOffset datetime = pos.Coordinate.Timestamp;
                     String time = pos.Coordinate.Timestamp.UtcDateTime.ToString("hhmmss");
-                    String date = pos.Coordinate.Timestamp.UtcDateTime.ToString("dMMyy");
+                    String date = pos.Coordinate.Timestamp.UtcDateTime.ToString("ddMMyy");
                     double lat = (double)pos.Coordinate.Point.Position.Latitude;
                     double lon = (double)pos.Coordinate.Point.Position.Longitude;
                     string accuracy = pos.Coordinate.Accuracy.ToString();
@@ -138,14 +138,32 @@ namespace GeolocationTCP
 
                     String sentence = String.Format("$GPRMC,{0},A,{1},{2},{3},{4},,",
                         time, coords, speed, heading, date);
-                   String nmea = sentence + "*" + getChecksum(sentence);
+                   String nmea = sentence + "*" + getChecksum(sentence) + "\r\n";
                     //Console.WriteLine("Sent NMEA sentence {0}", nmea);
 
                     Report(nmea);
 
                     PositionSource source = e.Position.Coordinate.PositionSource;
                     UpdateUI(datetime, nmea, lat, lon, speed, accuracy, source);
-                    
+
+                    double hdop = 0.0;
+                    if (pos.Coordinate.SatelliteData.HorizontalDilutionOfPrecision != null)
+                    {
+                        hdop = pos.Coordinate.SatelliteData.HorizontalDilutionOfPrecision.Value;
+                    }
+                    double altitude = pos.Coordinate.Point.Position.Altitude;
+                    double geoid_separation = 0.0;
+
+                    String gga_sentence = String.Format("$GPGGA,{0},{1},{2},{3},{4},{5},M,{6},M,0,0000",
+                        time,
+                        coords,
+                        1 /* Position Fix */,
+                        10 /* Number Satellites */,
+                        hdop,
+                        altitude,
+                        geoid_separation);
+                    nmea = gga_sentence + "*" + getChecksum(gga_sentence) + "\r\n";
+                    Report(nmea);
                 };
             }
 

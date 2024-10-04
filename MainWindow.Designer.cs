@@ -104,7 +104,7 @@
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(61, 13);
             this.label4.TabIndex = 2;
-            this.label4.Text = "127.0.0.1";
+            this.label4.Text = "0.0.0.0";
             this.label4.Click += new System.EventHandler(this.label4_Click);
             // 
             // label3

@@ -174,7 +174,7 @@ namespace TcpLib
         {
             try
             {
-                _listener.Bind(new IPEndPoint(IPAddress.Parse("127.0.0.1"), _port));
+                _listener.Bind(new IPEndPoint(IPAddress.Parse("0.0.0.0"), _port));
                 _listener.Listen(100);
                 _listener.BeginAccept(ConnectionReady, null);
                 return true;

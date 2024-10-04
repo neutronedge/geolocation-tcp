@@ -17,8 +17,6 @@ namespace GeolocationTCP
         [STAThread]
         static void Main()
         {
-            
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             MainWindow w = new MainWindow();
